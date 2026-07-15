@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memory Vault</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Caveat:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="variables.css" />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <!-- ============================================================ -->
+    <!-- LAYAR LOGIN — tampil pertama kali dibuka                      -->
+    <!-- ============================================================ -->
+    <div id="login-screen" class="login-screen">
+      <div class="login-hero">
+        <div class="login-hero__icon">
+          <svg
+            viewBox="0 0 24 24"
+            width="30"
+            height="30"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+            <circle cx="8.5" cy="8.5" r="1.6"></circle>
+            <path d="M21 15.5l-5.2-5.2-4 4-2.8-2.8L3 16.5"></path>
+          </svg>
+        </div>
+        <h1 class="login-hero__title">Memory Vault</h1>
+        <p class="login-hero__subtitle">
+          Setiap kenangan layak punya tempatnya.
+        </p>
+      </div>
+
+      <div class="login-card">
+        <form id="login-form" class="login-form">
+          <label class="login-card__label" for="login-password"
+            >Masukkan Password</label
+          >
+          <div class="login-field">
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="4" y="10" width="16" height="10" rx="2"></rect>
+              <path d="M7 10V7a5 5 0 0 1 10 0v3"></path>
+            </svg>
+            <input
+              type="password"
+              id="login-password"
+              placeholder="Password"
+              autocomplete="current-password"
+              required
+            />
+          </div>
+          <div id="login-error" class="form-error"></div>
+          <button type="submit" id="login-submit" class="btn btn-primary">
+            Buka Vault
+          </button>
+        </form>
+        <p class="login-card__note">
+          Website ini bersifat privat.<br />
+          Masukkan password untuk melanjutkan.
+        </p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ISI WEBSITE — muncul setelah password benar                  -->
+    <!-- ============================================================ -->
+    <div id="app-content" class="hidden">
+      <header class="topbar">
+        <div class="topbar__brand">
+          <span class="topbar__mark">MV</span>
+          <span class="topbar__title">Memory Vault</span>
+        </div>
+        <nav class="topbar__nav" id="main-nav">
+          <button class="nav-link is-active" data-target="home">Home</button>
+          <button class="nav-link" data-target="memories">Memories</button>
+          <button class="nav-link" data-target="quotes">Quotes</button>
+          <button class="nav-link" data-target="journal">Journal</button>
+          <button class="nav-link" data-target="confessions">Curhat</button>
+          <button class="nav-link" data-target="songs">Lagu</button>
+          <button class="nav-link" data-target="books">Book Shelf</button>
+          <button class="nav-link" data-target="movies">Movie Log</button>
+          <button class="nav-link" data-target="countdowns">Bom Waktu</button>
+        </nav>
+        <div class="topbar__actions">
+          <label class="topbar__search">
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="7"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input
+              type="text"
+              id="memories-search"
+              placeholder="Cari memories..."
+              autocomplete="off"
+            />
+          </label>
+          <button class="topbar__profile" type="button" aria-label="Profil">
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"></path>
+            </svg>
+          </button>
+        </div>
+        <button id="logout-btn" class="topbar__logout" title="Keluar">
+          Keluar
+        </button>
+      </header>
+
+      <main>
+        <!-- ---------------- HOME ---------------- -->
+        <section id="home" class="page-section is-active">
+          <div class="hero">
+            <div class="hero__text">
+              <p class="hero__eyebrow">Selamat datang kembali</p>
+              <h1 class="hero__title">
+                Setiap kenangan<br />punya rumahnya sendiri.
+              </h1>
+              <p class="hero__subtitle">
+                Memory Vault adalah ruang pribadi untuk menyimpan foto, video,
+                kutipan, dan catatan harian — jauh dari keramaian, hanya
+                untukmu.
+              </p>
+              <div class="hero__actions">
+                <button class="btn btn-primary" data-goto="memories">
+                  Lihat Memories
+                </button>
+                <button class="btn btn-ghost" data-goto="journal">
+                  Buka Journal
+                </button>
+              </div>
+            </div>
+
+            <div class="hero__catalog" aria-hidden="false">
+              <button
+                type="button"
+                class="catalog-card catalog-card--memories"
+                data-goto="memories"
+              >
+                <span class="catalog-card__tab">02</span>
+                <span class="catalog-card__label">Memories</span>
+                <span class="catalog-card__hint">Foto &amp; video</span>
+              </button>
+              <button
+                type="button"
+                class="catalog-card catalog-card--quotes"
+                data-goto="quotes"
+              >
+                <span class="catalog-card__tab">03</span>
+                <span class="catalog-card__label">Quotes</span>
+                <span class="catalog-card__hint">Kalimat favorit</span>
+              </button>
+              <button
+                type="button"
+                class="catalog-card catalog-card--journal"
+                data-goto="journal"
+              >
+                <span class="catalog-card__tab">04</span>
+                <span class="catalog-card__label">Journal</span>
+                <span class="catalog-card__hint">Catatan harian</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ---------------- MEMORIES ---------------- -->
+        <section id="memories" class="page-section">
+          <div class="section-head">
+            <span class="section-head__tab">02 — Memories</span>
+            <h2>Memories</h2>
+            <p>Kumpulan foto dan video yang tertempel seperti scrapbook.</p>
+          </div>
+
+          <div class="memories-toolbar">
+            <div class="memories-filters" id="memories-filters">
+              <button
+                class="filter-pill is-active"
+                data-filter="all"
+                type="button"
+              >
+                All
+              </button>
+              <button class="filter-pill" data-filter="photo" type="button">
+                Photo
+              </button>
+              <button class="filter-pill" data-filter="video" type="button">
+                Video
+              </button>
+            </div>
+            <select class="memories-sort" id="memories-sort">
+              <option value="latest">Latest</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </div>
+
+          <div id="memories-loading" class="state-message">
+            Memuat kenangan...
+          </div>
+          <div id="memories-empty" class="state-message hidden">
+            Belum ada memory yang ditambahkan.
+          </div>
+          <div id="scrapbook" class="scrapbook"></div>
+        </section>
+
+        <!-- ---------------- QUOTES ---------------- -->
+        <section id="quotes" class="page-section">
+          <div class="section-head">
+            <span class="section-head__tab">03 — Quotes</span>
+            <h2>Quotes</h2>
+            <p>Kalimat-kalimat kecil yang selalu ingin diingat.</p>
+          </div>
+          <div id="quotes-list" class="quotes-list"></div>
+        </section>
+
+        <!-- ---------------- JOURNAL ---------------- -->
+        <section id="journal" class="page-section">
+          <div class="section-head">
+            <span class="section-head__tab">04 — Journal</span>
+            <h2>Journal</h2>
+            <p>Catatan singkat, ditulis untuk diri sendiri di masa depan.</p>
+          </div>
+
+          <div id="journal-list" class="journal-list"></div>
+        </section>
+
+        <!-- ---------------- CURHAT ---------------- -->
+        <section id="confessions" class="page-section">
+          <div class="section-head">
+            <span class="section-head__tab">05 — Curhat</span>
+            <h2>Curhat</h2>
+            <p>
+              Ruang paling privat — tempat isi hati yang tidak perlu dirapikan.
+            </p>
+          </div>
+          <div id="confessions-loading" class="state-message">Memuat...</div>
+          <div id="confessions-empty" class="state-message hidden">
+            Belum ada curhatan.
+          </div>
+          <div id="confessions-list" class="journal-list"></div>
+        </section>
+
+        <!-- ---------------- LAGU FAVORIT ---------------- -->
+        <section id="songs" class="page-section">
+          <div class="section-head">
+            <span class="section-head__tab">06 — Lagu</span>
+            <h2>Lagu Favorit</h2>
+            <p>Lagu-lagu yang menemani momen tertentu — klik untuk memutar.</p>
+          </div>
+          <div id="songs-loading" class="state-message">Memuat...</div>
+          <div id="songs-empty" class="state-message hidden">
+            Belum ada lagu favorit.
+          </div>
+          <div id="songs-grid" class="songs-grid"></div>
+        </section>
+
+        <!-- ---------------- BOOK SHELF ---------------- -->
+        <section id="books" class="page-section">
+          <div class="section-head">
+            <span class="section-head__tab">07 — Book Shelf</span>
+            <h2>Book Shelf</h2>
+            <p>
+              Buku yang pernah dibaca, beserta pelajaran yang dibawa pulang.
+            </p>
+          </div>
+          <div id="books-loading" class="state-message">Memuat...</div>
+          <div id="books-empty" class="state-message hidden">
+            Belum ada buku yang dicatat.
+          </div>
+          <div id="books-grid" class="log-grid"></div>
+        </section>
+
+        <!-- ---------------- MOVIE LOG ---------------- -->
+        <section id="movies" class="page-section">
+          <div class="section-head">
+            <span class="section-head__tab">08 — Movie Log</span>
+            <h2>Movie Log</h2>
+            <p>Film yang pernah ditonton, beserta kesan dan pelajarannya.</p>
+          </div>
+          <div id="movies-loading" class="state-message">Memuat...</div>
+          <div id="movies-empty" class="state-message hidden">
+            Belum ada film yang dicatat.
+          </div>
+          <div id="movies-grid" class="log-grid"></div>
+        </section>
+
+        <!-- ---------------- BOM WAKTU ---------------- -->
+        <section id="countdowns" class="page-section">
+          <div class="section-head">
+            <span class="section-head__tab">09 — Bom Waktu</span>
+            <h2>Bom Waktu</h2>
+            <p>Hitung mundur menuju momen-momen yang dinanti.</p>
+          </div>
+          <div id="countdowns-loading" class="state-message">Memuat...</div>
+          <div id="countdowns-empty" class="state-message hidden">
+            Belum ada hitung mundur.
+          </div>
+          <div id="countdowns-grid" class="countdown-grid"></div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <span class="site-footer__mark">MV</span>
+        <p>Disimpan baik-baik, untuk dibuka kapan saja.</p>
+      </footer>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- POPUP DETAIL MEMORY                                           -->
+    <!-- ============================================================ -->
+    <div id="memory-modal" class="modal hidden">
+      <div class="modal__backdrop" id="modal-backdrop"></div>
+      <div class="modal__card" role="dialog" aria-modal="true">
+        <button class="modal__close" id="modal-close" aria-label="Tutup">
+          &times;
+        </button>
+        <div class="modal__media" id="modal-media"></div>
+        <div class="modal__body">
+          <span class="modal__date" id="modal-date"></span>
+          <h3 id="modal-title"></h3>
+          <p class="modal__caption" id="modal-caption"></p>
+          <p class="modal__description" id="modal-description"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- POPUP PLAYER LAGU — gaya Spotify                              -->
+    <!-- ============================================================ -->
+    <div id="song-modal" class="modal hidden">
+      <div class="modal__backdrop" id="song-modal-backdrop"></div>
+      <div class="song-modal__card" role="dialog" aria-modal="true">
+        <button class="modal__close" id="song-modal-close" aria-label="Tutup">
+          &times;
+        </button>
+
+        <div class="song-modal__art-wrap">
+          <div class="song-modal__glow" id="song-glow"></div>
+          <div class="song-modal__art" id="song-art-spin">
+            <img id="song-cover-img" src="" alt="" />
+          </div>
+        </div>
+
+        <h3 id="song-title-el"></h3>
+        <p class="song-modal__artist" id="song-artist-el"></p>
+
+        <div class="song-modal__equalizer" id="song-equalizer">
+          <span></span><span></span><span></span><span></span>
+        </div>
+
+        <button
+          class="song-modal__play-btn"
+          id="song-play-btn"
+          aria-label="Putar/Jeda"
+        >
+          <svg
+            id="song-icon-play"
+            viewBox="0 0 24 24"
+            width="26"
+            height="26"
+            fill="currentColor"
+          >
+            <path d="M8 5v14l11-7z" />
+          </svg>
+          <svg
+            id="song-icon-pause"
+            viewBox="0 0 24 24"
+            width="26"
+            height="26"
+            fill="currentColor"
+            class="hidden"
+          >
+            <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+          </svg>
+        </button>
+
+        <p class="song-modal__note" id="song-note-el"></p>
+
+        <audio id="song-audio-el"></audio>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- POPUP ISI LENGKAP — Journal & Curhat                          -->
+    <!-- ============================================================ -->
+    <div id="text-modal" class="modal hidden">
+      <div class="modal__backdrop" id="text-modal-backdrop"></div>
+      <div
+        class="modal__card modal__card--text"
+        role="dialog"
+        aria-modal="true"
+      >
+        <button class="modal__close" id="text-modal-close" aria-label="Tutup">
+          &times;
+        </button>
+        <div class="modal__body">
+          <span class="modal__date" id="text-modal-date"></span>
+          <h3 id="text-modal-title"></h3>
+          <p
+            class="modal__description modal__description--full"
+            id="text-modal-content"
+          ></p>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>

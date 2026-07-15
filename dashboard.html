@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memory Vault — Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="variables.css" />
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
+    <!-- ============================================================ -->
+    <!-- LAYAR LOGIN DASHBOARD                                         -->
+    <!-- ============================================================ -->
+    <div id="login-screen" class="login-screen">
+      <div class="login-card">
+        <div class="login-card__mark">MV</div>
+        <h1>Dashboard</h1>
+        <p>Masuk untuk mengelola isi Memory Vault.</p>
+        <form id="login-form" class="login-form">
+          <input
+            type="password"
+            id="login-password"
+            placeholder="Password admin"
+            autocomplete="current-password"
+            required
+          />
+          <div id="login-error" class="form-error"></div>
+          <button type="submit" id="login-submit" class="btn btn-primary">
+            Masuk
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ISI DASHBOARD                                                 -->
+    <!-- ============================================================ -->
+    <div id="app-content" class="hidden">
+      <header class="topbar">
+        <div class="topbar__brand">
+          <span class="topbar__mark">MV</span>
+          <span class="topbar__title">Dashboard</span>
+        </div>
+        <nav class="dash-tabs" id="dash-tabs">
+          <button class="nav-link is-active" data-tab="tab-memories">
+            Memories
+          </button>
+          <button class="nav-link" data-tab="tab-quotes">Quotes</button>
+          <button class="nav-link" data-tab="tab-journal">Journal</button>
+          <button class="nav-link" data-tab="tab-confessions">Curhat</button>
+          <button class="nav-link" data-tab="tab-songs">Lagu</button>
+          <button class="nav-link" data-tab="tab-books">Book Shelf</button>
+          <button class="nav-link" data-tab="tab-movies">Movie Log</button>
+          <button class="nav-link" data-tab="tab-countdowns">Bom Waktu</button>
+        </nav>
+        <a href="index.html" class="topbar__link">Lihat Vault &rarr;</a>
+        <button id="logout-btn" class="topbar__logout">Keluar</button>
+      </header>
+
+      <main>
+        <!-- ============================================================ -->
+        <!-- TAB: MEMORIES                                                 -->
+        <!-- ============================================================ -->
+        <div id="tab-memories" class="dash-tab is-active">
+          <!-- ---------- FORM TAMBAH / EDIT MEMORY ---------- -->
+          <section class="panel">
+            <div class="panel__head">
+              <h2 id="form-heading">Tambah Memory Baru</h2>
+              <button id="cancel-edit-btn" class="btn btn-ghost hidden">
+                Batal Edit
+              </button>
+            </div>
+
+            <form id="memory-form" class="memory-form">
+              <input type="hidden" id="memory-id" />
+
+              <div class="form-row">
+                <label for="field-title">Judul</label>
+                <input
+                  type="text"
+                  id="field-title"
+                  required
+                  placeholder="Contoh: Liburan ke Bromo"
+                />
+              </div>
+
+              <div class="form-row">
+                <label for="field-caption">Caption</label>
+                <input
+                  type="text"
+                  id="field-caption"
+                  placeholder="Kalimat singkat, seperti tulisan tangan di polaroid"
+                />
+              </div>
+
+              <div class="form-row">
+                <label for="field-description">Deskripsi</label>
+                <textarea
+                  id="field-description"
+                  rows="3"
+                  placeholder="Cerita lebih panjang di balik momen ini"
+                ></textarea>
+              </div>
+
+              <div class="form-row-split">
+                <div class="form-row">
+                  <label for="field-date">Tanggal</label>
+                  <input type="date" id="field-date" required />
+                </div>
+                <div class="form-row">
+                  <label for="field-media-type">Tipe Media</label>
+                  <select id="field-media-type">
+                    <option value="image">Foto</option>
+                    <option value="video">Video</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <label for="field-file">File (foto/video)</label>
+                <input type="file" id="field-file" accept="image/*,video/*" />
+                <span class="form-hint" id="existing-file-hint"></span>
+              </div>
+
+              <div id="form-error" class="form-error"></div>
+
+              <button type="submit" id="submit-btn" class="btn btn-primary">
+                Simpan Memory
+              </button>
+            </form>
+          </section>
+
+          <!-- ---------- DAFTAR MEMORY ---------- -->
+          <section class="panel">
+            <div class="panel__head">
+              <h2>Semua Memory</h2>
+            </div>
+            <div id="list-loading" class="state-message">Memuat data...</div>
+            <div id="list-empty" class="state-message hidden">
+              Belum ada memory. Tambahkan lewat form di atas.
+            </div>
+            <div id="memory-list" class="memory-list"></div>
+          </section>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB: QUOTES                                                   -->
+        <!-- ============================================================ -->
+        <div id="tab-quotes" class="dash-tab">
+          <section class="panel">
+            <div class="panel__head">
+              <h2 id="quote-form-heading">Tambah Quote Baru</h2>
+              <button id="quote-cancel-edit-btn" class="btn btn-ghost hidden">
+                Batal Edit
+              </button>
+            </div>
+
+            <form id="quote-form" class="memory-form">
+              <input type="hidden" id="quote-id" />
+
+              <div class="form-row">
+                <label for="quote-text">Kutipan</label>
+                <textarea
+                  id="quote-text"
+                  rows="2"
+                  required
+                  placeholder="Tulis kutipannya di sini"
+                ></textarea>
+              </div>
+
+              <div class="form-row">
+                <label for="quote-author">Sumber / Penulis</label>
+                <input
+                  type="text"
+                  id="quote-author"
+                  placeholder="Contoh: Anonim, atau nama penulis"
+                />
+              </div>
+
+              <div id="quote-form-error" class="form-error"></div>
+
+              <button
+                type="submit"
+                id="quote-submit-btn"
+                class="btn btn-primary"
+              >
+                Simpan Quote
+              </button>
+            </form>
+          </section>
+
+          <section class="panel">
+            <div class="panel__head">
+              <h2>Semua Quotes</h2>
+            </div>
+            <div id="quote-list-loading" class="state-message">
+              Memuat data...
+            </div>
+            <div id="quote-list-empty" class="state-message hidden">
+              Belum ada quote. Tambahkan lewat form di atas.
+            </div>
+            <div id="quote-list" class="memory-list"></div>
+          </section>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB: JOURNAL                                                  -->
+        <!-- ============================================================ -->
+        <div id="tab-journal" class="dash-tab">
+          <section class="panel">
+            <div class="panel__head">
+              <h2 id="journal-form-heading">Tambah Entri Journal</h2>
+              <button id="journal-cancel-edit-btn" class="btn btn-ghost hidden">
+                Batal Edit
+              </button>
+            </div>
+
+            <form id="journal-form" class="memory-form">
+              <input type="hidden" id="journal-id" />
+
+              <div class="form-row">
+                <label for="journal-title">Judul</label>
+                <input
+                  type="text"
+                  id="journal-title"
+                  required
+                  placeholder="Contoh: Hari biasa yang baik"
+                />
+              </div>
+
+              <div class="form-row">
+                <label for="journal-date">Tanggal</label>
+                <input type="date" id="journal-date" required />
+              </div>
+
+              <div class="form-row">
+                <label for="journal-content">Isi Catatan</label>
+                <textarea
+                  id="journal-content"
+                  rows="5"
+                  required
+                  placeholder="Tulis catatanmu di sini"
+                ></textarea>
+              </div>
+
+              <div id="journal-form-error" class="form-error"></div>
+
+              <button
+                type="submit"
+                id="journal-submit-btn"
+                class="btn btn-primary"
+              >
+                Simpan Entri
+              </button>
+            </form>
+          </section>
+
+          <section class="panel">
+            <div class="panel__head">
+              <h2>Semua Entri Journal</h2>
+            </div>
+            <div id="journal-list-loading" class="state-message">
+              Memuat data...
+            </div>
+            <div id="journal-list-empty" class="state-message hidden">
+              Belum ada entri. Tambahkan lewat form di atas.
+            </div>
+            <div id="journal-list" class="memory-list"></div>
+          </section>
+        </div>
+        <!-- ============================================================ -->
+        <!-- TAB: CURHAT                                                   -->
+        <!-- ============================================================ -->
+        <div id="tab-confessions" class="dash-tab">
+          <section class="panel">
+            <div class="panel__head">
+              <h2 id="confession-form-heading">Tambah Curhatan</h2>
+              <button
+                id="confession-cancel-edit-btn"
+                class="btn btn-ghost hidden"
+              >
+                Batal Edit
+              </button>
+            </div>
+            <form id="confession-form" class="memory-form">
+              <input type="hidden" id="confession-id" />
+              <div class="form-row">
+                <label for="confession-title">Judul</label>
+                <input
+                  type="text"
+                  id="confession-title"
+                  required
+                  placeholder="Contoh: Hari yang berat"
+                />
+              </div>
+              <div class="form-row">
+                <label for="confession-date">Tanggal</label>
+                <input type="date" id="confession-date" required />
+              </div>
+              <div class="form-row">
+                <label for="confession-content">Isi Curhatan</label>
+                <textarea
+                  id="confession-content"
+                  rows="5"
+                  required
+                  placeholder="Tulis apa saja yang ingin kamu keluarkan"
+                ></textarea>
+              </div>
+              <div id="confession-form-error" class="form-error"></div>
+              <button
+                type="submit"
+                id="confession-submit-btn"
+                class="btn btn-primary"
+              >
+                Simpan Curhatan
+              </button>
+            </form>
+          </section>
+          <section class="panel">
+            <div class="panel__head"><h2>Semua Curhatan</h2></div>
+            <div id="confession-list-loading" class="state-message">
+              Memuat data...
+            </div>
+            <div id="confession-list-empty" class="state-message hidden">
+              Belum ada curhatan.
+            </div>
+            <div id="confession-list" class="memory-list"></div>
+          </section>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB: LAGU FAVORIT                                             -->
+        <!-- ============================================================ -->
+        <div id="tab-songs" class="dash-tab">
+          <section class="panel">
+            <div class="panel__head">
+              <h2 id="song-form-heading">Tambah Lagu Favorit</h2>
+              <button id="song-cancel-edit-btn" class="btn btn-ghost hidden">
+                Batal Edit
+              </button>
+            </div>
+            <form id="song-form" class="memory-form">
+              <input type="hidden" id="song-id" />
+              <div class="form-row">
+                <label for="song-title">Judul Lagu</label>
+                <input
+                  type="text"
+                  id="song-title"
+                  required
+                  placeholder="Contoh: Sepasang Kekasih"
+                />
+              </div>
+              <div class="form-row">
+                <label for="song-artist">Artis</label>
+                <input
+                  type="text"
+                  id="song-artist"
+                  placeholder="Contoh: Tulus"
+                />
+              </div>
+              <div class="form-row">
+                <label for="song-note">Kenapa lagu ini spesial?</label>
+                <textarea
+                  id="song-note"
+                  rows="2"
+                  placeholder="Ceritakan momen di balik lagu ini"
+                ></textarea>
+              </div>
+              <div class="form-row">
+                <label for="song-cover">Cover / Sampul (gambar)</label>
+                <input type="file" id="song-cover" accept="image/*" />
+                <span class="form-hint" id="song-existing-cover-hint"></span>
+              </div>
+              <div class="form-row">
+                <label for="song-audio">File Lagu (mp3)</label>
+                <input type="file" id="song-audio" accept="audio/*" />
+                <span class="form-hint" id="song-existing-audio-hint"></span>
+              </div>
+              <div id="song-form-error" class="form-error"></div>
+              <button
+                type="submit"
+                id="song-submit-btn"
+                class="btn btn-primary"
+              >
+                Simpan Lagu
+              </button>
+            </form>
+          </section>
+          <section class="panel">
+            <div class="panel__head"><h2>Semua Lagu</h2></div>
+            <div id="song-list-loading" class="state-message">
+              Memuat data...
+            </div>
+            <div id="song-list-empty" class="state-message hidden">
+              Belum ada lagu.
+            </div>
+            <div id="song-list" class="memory-list"></div>
+          </section>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB: BOOK SHELF                                               -->
+        <!-- ============================================================ -->
+        <div id="tab-books" class="dash-tab">
+          <section class="panel">
+            <div class="panel__head">
+              <h2 id="book-form-heading">Tambah Buku</h2>
+              <button id="book-cancel-edit-btn" class="btn btn-ghost hidden">
+                Batal Edit
+              </button>
+            </div>
+            <form id="book-form" class="memory-form">
+              <input type="hidden" id="book-id" />
+              <div class="form-row">
+                <label for="book-title">Judul Buku</label>
+                <input
+                  type="text"
+                  id="book-title"
+                  required
+                  placeholder="Contoh: Laut Bercerita"
+                />
+              </div>
+              <div class="form-row-split">
+                <div class="form-row">
+                  <label for="book-author">Penulis</label>
+                  <input
+                    type="text"
+                    id="book-author"
+                    placeholder="Contoh: Leila S. Chudori"
+                  />
+                </div>
+                <div class="form-row">
+                  <label for="book-rating">Rating</label>
+                  <select id="book-rating" required>
+                    <option value="5">★★★★★ (5)</option>
+                    <option value="4">★★★★☆ (4)</option>
+                    <option value="3">★★★☆☆ (3)</option>
+                    <option value="2">★★☆☆☆ (2)</option>
+                    <option value="1">★☆☆☆☆ (1)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <label for="book-finished-date"
+                  >Tanggal Selesai Dibaca (opsional)</label
+                >
+                <input type="date" id="book-finished-date" />
+              </div>
+              <div class="form-row">
+                <label for="book-lesson">Pelajaran yang Didapat</label>
+                <textarea
+                  id="book-lesson"
+                  rows="3"
+                  placeholder="Apa yang kamu pelajari dari buku ini?"
+                ></textarea>
+              </div>
+              <div id="book-form-error" class="form-error"></div>
+              <button
+                type="submit"
+                id="book-submit-btn"
+                class="btn btn-primary"
+              >
+                Simpan Buku
+              </button>
+            </form>
+          </section>
+          <section class="panel">
+            <div class="panel__head"><h2>Semua Buku</h2></div>
+            <div id="book-list-loading" class="state-message">
+              Memuat data...
+            </div>
+            <div id="book-list-empty" class="state-message hidden">
+              Belum ada buku.
+            </div>
+            <div id="book-list" class="memory-list"></div>
+          </section>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB: MOVIE LOG                                                -->
+        <!-- ============================================================ -->
+        <div id="tab-movies" class="dash-tab">
+          <section class="panel">
+            <div class="panel__head">
+              <h2 id="movie-form-heading">Tambah Film</h2>
+              <button id="movie-cancel-edit-btn" class="btn btn-ghost hidden">
+                Batal Edit
+              </button>
+            </div>
+            <form id="movie-form" class="memory-form">
+              <input type="hidden" id="movie-id" />
+              <div class="form-row">
+                <label for="movie-title">Judul Film</label>
+                <input
+                  type="text"
+                  id="movie-title"
+                  required
+                  placeholder="Contoh: Pengabdi Setan"
+                />
+              </div>
+              <div class="form-row-split">
+                <div class="form-row">
+                  <label for="movie-watched-date"
+                    >Tanggal Ditonton (opsional)</label
+                  >
+                  <input type="date" id="movie-watched-date" />
+                </div>
+                <div class="form-row">
+                  <label for="movie-rating">Rating</label>
+                  <select id="movie-rating" required>
+                    <option value="5">★★★★★ (5)</option>
+                    <option value="4">★★★★☆ (4)</option>
+                    <option value="3">★★★☆☆ (3)</option>
+                    <option value="2">★★☆☆☆ (2)</option>
+                    <option value="1">★☆☆☆☆ (1)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <label for="movie-lesson">Pelajaran yang Didapat</label>
+                <textarea
+                  id="movie-lesson"
+                  rows="3"
+                  placeholder="Apa yang kamu pelajari dari film ini?"
+                ></textarea>
+              </div>
+              <div id="movie-form-error" class="form-error"></div>
+              <button
+                type="submit"
+                id="movie-submit-btn"
+                class="btn btn-primary"
+              >
+                Simpan Film
+              </button>
+            </form>
+          </section>
+          <section class="panel">
+            <div class="panel__head"><h2>Semua Film</h2></div>
+            <div id="movie-list-loading" class="state-message">
+              Memuat data...
+            </div>
+            <div id="movie-list-empty" class="state-message hidden">
+              Belum ada film.
+            </div>
+            <div id="movie-list" class="memory-list"></div>
+          </section>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB: BOM WAKTU (COUNTDOWN)                                    -->
+        <!-- ============================================================ -->
+        <div id="tab-countdowns" class="dash-tab">
+          <section class="panel">
+            <div class="panel__head">
+              <h2 id="countdown-form-heading">Tambah Hitung Mundur</h2>
+              <button
+                id="countdown-cancel-edit-btn"
+                class="btn btn-ghost hidden"
+              >
+                Batal Edit
+              </button>
+            </div>
+            <form id="countdown-form" class="memory-form">
+              <input type="hidden" id="countdown-id" />
+              <div class="form-row">
+                <label for="countdown-title">Judul</label>
+                <input
+                  type="text"
+                  id="countdown-title"
+                  required
+                  placeholder="Contoh: Ulang Tahunku"
+                />
+              </div>
+              <div class="form-row">
+                <label for="countdown-date">Tanggal Target</label>
+                <input type="date" id="countdown-date" required />
+              </div>
+              <div class="form-row form-row--checkbox">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="countdown-recurring" />
+                  Berulang tiap tahun (misalnya ulang tahun)
+                </label>
+              </div>
+              <div id="countdown-form-error" class="form-error"></div>
+              <button
+                type="submit"
+                id="countdown-submit-btn"
+                class="btn btn-primary"
+              >
+                Simpan Hitung Mundur
+              </button>
+            </form>
+          </section>
+          <section class="panel">
+            <div class="panel__head"><h2>Semua Hitung Mundur</h2></div>
+            <div id="countdown-list-loading" class="state-message">
+              Memuat data...
+            </div>
+            <div id="countdown-list-empty" class="state-message hidden">
+              Belum ada hitung mundur.
+            </div>
+            <div id="countdown-list" class="memory-list"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="dashboard.js"></script>
+  </body>
+</html>
