@@ -340,115 +340,63 @@ main,
   color: var(--color-sky-deep);
 }
 
-.topbar__actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.topbar__search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--color-gray-50);
-  border: 1.5px solid var(--color-gray-200);
-  border-radius: 999px;
-  padding: 8px 14px;
-  color: var(--color-ink-faint);
-  transition: border-color 0.2s ease;
-}
-
-.topbar__search:focus-within {
-  border-color: var(--color-sky);
-}
-
-.topbar__search input {
-  border: none;
-  background: transparent;
-  outline: none;
-  font-size: 13.5px;
-  color: var(--color-ink);
-  width: 160px;
-}
-
-.topbar__search input::placeholder {
-  color: var(--color-ink-faint);
-}
-
-.topbar__profile {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1.5px solid var(--color-gray-200);
-  background: var(--color-white);
-  color: var(--color-sky-deep);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    border-color 0.2s ease,
-    transform 0.15s ease;
-}
-
-.topbar__profile:hover {
-  border-color: var(--color-sky);
-  transform: translateY(-1px);
-}
-
-@media (max-width: 860px) {
-  .topbar__actions {
-    order: 4;
-  }
-  .topbar__search input {
-    width: 120px;
-  }
-}
-
-@media (max-width: 560px) {
-  .topbar__search {
-    padding: 6px 10px;
-  }
-  .topbar__search input {
-    width: 88px;
-  }
-}
-
 .topbar__nav {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  align-items: center;
   gap: 2px;
-  max-width: 620px;
-  justify-content: flex-end;
-  background: var(--color-gray-50);
-  padding: 4px;
-  border-radius: 12px;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  justify-content: center;
+}
+
+.topbar__nav::-webkit-scrollbar {
+  display: none;
 }
 
 .nav-link {
+  position: relative;
+  flex: 0 0 auto;
   border: none;
   background: transparent;
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 8px 14px 10px;
+  border-radius: 0;
   font-size: 13.5px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.01em;
-  color: var(--color-ink-soft);
-  transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    transform 0.15s ease;
+  white-space: nowrap;
+  color: var(--color-ink-faint);
+  transition: color 0.2s ease;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 2px;
+  height: 2px;
+  background: var(--color-sky);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transition: transform 0.2s ease;
 }
 
 .nav-link:hover {
   color: var(--color-ink);
-  transform: translateY(-1px);
 }
 
 .nav-link.is-active {
-  background: var(--color-white);
+  background: transparent;
   color: var(--color-sky-deep);
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(47, 107, 176, 0.16);
+  box-shadow: none;
+}
+
+.nav-link.is-active::after {
+  transform: scaleX(1);
 }
 
 .topbar__logout {
@@ -476,23 +424,33 @@ main,
     padding: 10px var(--space-2);
   }
 
+  .topbar__brand {
+    gap: 8px;
+  }
+
+  .topbar__logout {
+    order: 2;
+    flex-shrink: 0;
+  }
+
   .topbar__nav {
     order: 3;
+    flex: 1 1 100%;
     width: 100%;
     max-width: none;
     flex-wrap: nowrap;
     justify-content: flex-start;
     overflow-x: auto;
+    scroll-padding-inline: 14px;
     scroll-snap-type: x proximity;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    mask-image: linear-gradient(
-      to right,
-      transparent 0,
-      black 14px,
-      black calc(100% - 14px),
-      transparent 100%
-    );
+    padding: 4px 14px;
+    margin: 0 calc(var(--space-2) * -1);
+    border-radius: 0;
+    background: transparent;
+    border-top: 1px solid var(--color-gray-100);
+    padding-top: 8px;
   }
 
   .topbar__nav::-webkit-scrollbar {
@@ -503,8 +461,39 @@ main,
     flex: 0 0 auto;
     white-space: nowrap;
     scroll-snap-align: start;
-    padding: 7px 13px;
+    padding: 7px 13px 9px;
     font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    padding: 9px var(--space-2);
+  }
+
+  .topbar__mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+  }
+
+  .topbar__mark::before {
+    width: 15px;
+    height: 15px;
+  }
+
+  .topbar__title {
+    font-size: 22px;
+  }
+
+  .topbar__logout {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .nav-link {
+    padding: 6px 11px 8px;
+    font-size: 12.5px;
   }
 }
 
