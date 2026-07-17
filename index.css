@@ -1275,6 +1275,92 @@ main {
 }
 
 /* =========================================================
+   PESAN — form umum di halaman "Pesan" + form di dalam popup Curhat
+   ========================================================= */
+.pesan-card {
+  max-width: 480px;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-3);
+  box-shadow: var(--shadow-card);
+}
+
+.msg-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.msg-form__row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.msg-form__row label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-faint);
+}
+
+.msg-form__row input,
+.msg-form__row textarea {
+  border: none;
+  border-bottom: 1.5px solid var(--color-gray-200);
+  background: transparent;
+  border-radius: 0;
+  padding: 8px 2px;
+  font-size: 15px;
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.msg-form__row textarea {
+  border: 1.5px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  background: var(--color-gray-50);
+  padding: 10px 12px;
+}
+
+.msg-form__row input:focus,
+.msg-form__row textarea:focus {
+  border-color: var(--color-sky);
+  outline: none;
+}
+
+.msg-form__success {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-sky-deep);
+  margin-top: -4px;
+}
+
+/* Blok pesan di dalam popup Curhat */
+.curhat-message {
+  margin-top: var(--space-3);
+}
+
+.curhat-message__divider {
+  height: 1px;
+  background: var(--color-gray-200);
+  margin-bottom: var(--space-3);
+}
+
+.curhat-message__heading {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.curhat-message__hint {
+  font-size: 13px;
+  margin-bottom: var(--space-2);
+}
+
+/* =========================================================
    LAGU FAVORIT — grid ala Spotify
    ========================================================= */
 .songs-grid {
@@ -1370,6 +1456,9 @@ main {
   box-shadow: var(--shadow-modal);
   max-width: 380px;
   width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: var(--space-4) var(--space-3) var(--space-3);
   text-align: center;
   animation: modalPop 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -1377,62 +1466,30 @@ main {
 
 .song-modal__art-wrap {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  max-width: 260px;
+  aspect-ratio: 1 / 1;
   margin: 0 auto var(--space-3);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.song-modal__glow {
-  position: absolute;
-  inset: -18px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(110, 198, 255, 0.45),
-    transparent 70%
-  );
-  filter: blur(6px);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.song-modal__glow.is-playing {
-  opacity: 1;
-  animation: songPulse 1.8s ease-in-out infinite;
-}
-
-@keyframes songPulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.08);
-  }
-}
-
 .song-modal__art {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 12px 30px rgba(41, 52, 61, 0.28);
-  border: 6px solid var(--color-white);
+  background: var(--color-ink);
+  box-shadow: 0 14px 32px rgba(41, 52, 61, 0.28);
   position: relative;
-  z-index: 1;
+  transition: box-shadow 0.3s ease;
 }
 
 .song-modal__art.is-spinning {
-  animation: songSpin 6s linear infinite;
-}
-
-@keyframes songSpin {
-  to {
-    transform: rotate(360deg);
-  }
+  box-shadow:
+    0 16px 36px rgba(41, 52, 61, 0.3),
+    0 0 0 4px rgba(110, 198, 255, 0.35);
 }
 
 .song-modal__art img {
@@ -1450,51 +1507,106 @@ main {
 .song-modal__artist {
   font-size: 13.5px;
   color: var(--color-ink-faint);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
-.song-modal__equalizer {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 4px;
-  height: 22px;
-  margin-bottom: var(--space-2);
+/* ---- Progress bar (waktu berjalan) ---- */
+.song-modal__progress {
+  margin: 0 auto var(--space-2);
+  max-width: 300px;
 }
 
-.song-modal__equalizer span {
-  width: 4px;
-  height: 6px;
+.song-modal__range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-gray-200);
+  outline: none;
+  cursor: pointer;
+}
+
+.song-modal__range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--color-sky) 0%,
+    var(--color-sky) var(--song-progress, 0%),
+    var(--color-gray-200) var(--song-progress, 0%),
+    var(--color-gray-200) 100%
+  );
+}
+
+.song-modal__range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  border-radius: 50%;
+  background: var(--color-white);
+  border: 2px solid var(--color-sky-deep);
+  box-shadow: 0 2px 6px rgba(41, 52, 61, 0.25);
+}
+
+.song-modal__range::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-gray-200);
+}
+
+.song-modal__range::-moz-range-progress {
+  height: 4px;
+  border-radius: 999px;
   background: var(--color-sky);
-  border-radius: 2px;
-  animation: none;
 }
 
-.song-modal__equalizer.is-playing span {
-  animation: eqBounce 0.9s ease-in-out infinite;
+.song-modal__range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-white);
+  border: 2px solid var(--color-sky-deep);
 }
 
-.song-modal__equalizer span:nth-child(1) {
-  animation-delay: 0s;
-}
-.song-modal__equalizer span:nth-child(2) {
-  animation-delay: 0.15s;
-}
-.song-modal__equalizer span:nth-child(3) {
-  animation-delay: 0.3s;
-}
-.song-modal__equalizer span:nth-child(4) {
-  animation-delay: 0.45s;
+.song-modal__time-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--color-ink-faint);
+  margin-top: 6px;
+  font-variant-numeric: tabular-nums;
 }
 
-@keyframes eqBounce {
-  0%,
-  100% {
-    height: 6px;
-  }
-  50% {
-    height: 20px;
-  }
+/* ---- Tombol transport: mundur / play-pause / maju ---- */
+.song-modal__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.song-modal__ctrl-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--color-ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.song-modal__ctrl-btn:hover {
+  color: var(--color-sky-deep);
+  background: var(--color-sky-pale);
 }
 
 .song-modal__play-btn {
@@ -1511,7 +1623,6 @@ main {
   transition:
     transform 0.15s ease,
     background 0.2s ease;
-  margin-bottom: var(--space-2);
 }
 
 .song-modal__play-btn:hover {
@@ -1521,6 +1632,20 @@ main {
 
 .song-modal__play-btn:active {
   transform: scale(0.96);
+}
+
+/* ---- Slider volume ---- */
+.song-modal__volume {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 300px;
+  margin: 0 auto var(--space-3);
+  color: var(--color-ink-faint);
+}
+
+.song-modal__range--volume {
+  height: 3px;
 }
 
 .song-modal__note {
