@@ -439,10 +439,42 @@ const textModalDate = document.getElementById("text-modal-date");
 const textModalTitle = document.getElementById("text-modal-title");
 const textModalContent = document.getElementById("text-modal-content");
 
-function openTextModal(entry) {
+// ---- Blok "Kirim pesan untuk Rohid" di dalam popup curhat ----------------
+const textModalMessageBlock = document.getElementById("text-modal-message");
+const curhatMessageForm = document.getElementById("curhat-message-form");
+const curhatMessageNameInput = document.getElementById("curhat-message-name");
+const curhatMessageTextInput = document.getElementById("curhat-message-text");
+const curhatMessageError = document.getElementById("curhat-message-error");
+const curhatMessageSuccess = document.getElementById("curhat-message-success");
+const curhatMessageSubmitBtn = document.getElementById("curhat-message-submit");
+
+// Menyimpan curhatan mana yang sedang dibuka, supaya saat form pesan
+// dikirim kita tahu harus melampirkan judul curhatan yang mana.
+// Bernilai null saat popup dibuka dari Journal (bukan Curhat).
+let currentCurhatContext = null;
+
+function resetCurhatMessageForm() {
+  curhatMessageForm.reset();
+  curhatMessageError.textContent = "";
+  curhatMessageSuccess.classList.add("hidden");
+  curhatMessageSubmitBtn.disabled = false;
+  curhatMessageSubmitBtn.textContent = "Kirim Pesan";
+}
+
+function openTextModal(entry, type) {
   textModalDate.textContent = formatDate(entry.entry_date);
   textModalTitle.textContent = entry.title || "";
   textModalContent.textContent = entry.content || "";
+
+  // Form pesan hanya ditampilkan kalau popup ini dibuka dari Curhat.
+  if (type === "confession") {
+    currentCurhatContext = { id: entry.id, title: entry.title || "" };
+    textModalMessageBlock.classList.remove("hidden");
+  } else {
+    currentCurhatContext = null;
+    textModalMessageBlock.classList.add("hidden");
+  }
+  resetCurhatMessageForm();
 
   textModal.classList.remove("hidden");
   document.body.style.overflow = "hidden";
@@ -452,6 +484,46 @@ function closeTextModal() {
   textModal.classList.add("hidden");
   document.body.style.overflow = "";
 }
+
+curhatMessageForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  curhatMessageError.textContent = "";
+  curhatMessageSuccess.classList.add("hidden");
+
+  const senderName = curhatMessageNameInput.value.trim();
+  const messageText = curhatMessageTextInput.value.trim();
+
+  if (!senderName) {
+    curhatMessageError.textContent = "Nama wajib diisi.";
+    return;
+  }
+  if (!messageText) {
+    curhatMessageError.textContent = "Pesan tidak boleh kosong.";
+    return;
+  }
+
+  curhatMessageSubmitBtn.disabled = true;
+  curhatMessageSubmitBtn.innerHTML = '<span class="spinner"></span>Mengirim...';
+
+  const { error } = await supabaseClient.from("messages").insert({
+    sender_name: senderName,
+    message: messageText,
+    confession_id: currentCurhatContext ? currentCurhatContext.id : null,
+    confession_title: currentCurhatContext ? currentCurhatContext.title : null,
+  });
+
+  curhatMessageSubmitBtn.disabled = false;
+  curhatMessageSubmitBtn.textContent = "Kirim Pesan";
+
+  if (error) {
+    console.error(error);
+    curhatMessageError.textContent = "Gagal mengirim pesan. Coba lagi.";
+    return;
+  }
+
+  curhatMessageForm.reset();
+  curhatMessageSuccess.classList.remove("hidden");
+});
 
 textModalClose.addEventListener("click", closeTextModal);
 textModalBackdrop.addEventListener("click", closeTextModal);
@@ -468,7 +540,9 @@ function makeExcerpt(text, maxLength = 110) {
 }
 
 // Render satu kelompok entri (journal / curhat) jadi kartu ringkas yang bisa diklik.
-function renderTextEntryCards(container, entries, cache) {
+// `type` dipakai openTextModal untuk tahu apakah harus menampilkan form
+// "Kirim pesan untuk Rohid" (hanya untuk type === "confession").
+function renderTextEntryCards(container, entries, cache, type) {
   cache.length = 0;
   cache.push(...entries);
 
@@ -486,7 +560,7 @@ function renderTextEntryCards(container, entries, cache) {
     .join("");
 
   container.querySelectorAll(".journal-entry").forEach((card) => {
-    const open = () => openTextModal(cache[Number(card.dataset.index)]);
+    const open = () => openTextModal(cache[Number(card.dataset.index)], type);
     card.addEventListener("click", open);
     card.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
@@ -520,7 +594,7 @@ async function renderJournal() {
     return;
   }
 
-  renderTextEntryCards(container, data, journalCache);
+  renderTextEntryCards(container, data, journalCache, "journal");
 }
 
 // =========================================================
@@ -553,8 +627,67 @@ async function loadConfessions() {
     return;
   }
 
-  renderTextEntryCards(container, data, confessionsCache);
+  renderTextEntryCards(container, data, confessionsCache, "confession");
 }
+
+// =========================================================
+// PESAN — form umum di halaman "Pesan" (bukan dari curhatan tertentu)
+// =========================================================
+const generalMessageForm = document.getElementById("general-message-form");
+const generalMessageNameInput = document.getElementById("general-message-name");
+const generalMessageTextInput = document.getElementById("general-message-text");
+const generalMessageError = document.getElementById("general-message-error");
+const generalMessageSuccess = document.getElementById(
+  "general-message-success",
+);
+const generalMessageSubmitBtn = document.getElementById(
+  "general-message-submit",
+);
+
+generalMessageForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  generalMessageError.textContent = "";
+  generalMessageSuccess.classList.add("hidden");
+
+  const senderName = generalMessageNameInput.value.trim();
+  const messageText = generalMessageTextInput.value.trim();
+
+  if (!senderName) {
+    generalMessageError.textContent = "Nama wajib diisi.";
+    return;
+  }
+  if (!messageText) {
+    generalMessageError.textContent = "Pesan tidak boleh kosong.";
+    return;
+  }
+
+  generalMessageSubmitBtn.disabled = true;
+  generalMessageSubmitBtn.innerHTML =
+    '<span class="spinner"></span>Mengirim...';
+
+  // confession_id & confession_title sengaja dikosongkan (null) karena
+  // pesan ini dikirim dari halaman "Pesan" umum, bukan dari curhatan
+  // tertentu — di dashboard nanti tidak akan tampil keterangan asal
+  // curhatan untuk pesan jenis ini.
+  const { error } = await supabaseClient.from("messages").insert({
+    sender_name: senderName,
+    message: messageText,
+    confession_id: null,
+    confession_title: null,
+  });
+
+  generalMessageSubmitBtn.disabled = false;
+  generalMessageSubmitBtn.textContent = "Kirim Pesan";
+
+  if (error) {
+    console.error(error);
+    generalMessageError.textContent = "Gagal mengirim pesan. Coba lagi.";
+    return;
+  }
+
+  generalMessageForm.reset();
+  generalMessageSuccess.classList.remove("hidden");
+});
 
 // =========================================================
 // LAGU FAVORIT — grid + popup player ala Spotify
@@ -618,15 +751,19 @@ const songModalBackdrop = document.getElementById("song-modal-backdrop");
 const songModalClose = document.getElementById("song-modal-close");
 const songCoverImg = document.getElementById("song-cover-img");
 const songArtSpin = document.getElementById("song-art-spin");
-const songGlow = document.getElementById("song-glow");
 const songTitleEl = document.getElementById("song-title-el");
 const songArtistEl = document.getElementById("song-artist-el");
 const songNoteEl = document.getElementById("song-note-el");
-const songEqualizer = document.getElementById("song-equalizer");
 const songPlayBtn = document.getElementById("song-play-btn");
 const songIconPlay = document.getElementById("song-icon-play");
 const songIconPause = document.getElementById("song-icon-pause");
 const songAudioEl = document.getElementById("song-audio-el");
+const songProgress = document.getElementById("song-progress");
+const songTimeCurrent = document.getElementById("song-time-current");
+const songTimeRemaining = document.getElementById("song-time-remaining");
+const songBackBtn = document.getElementById("song-back-btn");
+const songForwardBtn = document.getElementById("song-forward-btn");
+const songVolume = document.getElementById("song-volume");
 
 function openSongModal(song) {
   songCoverImg.src = song.cover_url || "";
@@ -634,6 +771,11 @@ function openSongModal(song) {
   songArtistEl.textContent = song.artist || "";
   songNoteEl.textContent = song.memory_note || "";
   songAudioEl.src = song.audio_url;
+
+  songProgress.value = 0;
+  songProgress.style.setProperty("--song-progress", "0%");
+  songTimeCurrent.textContent = "0:00";
+  songTimeRemaining.textContent = "-0:00";
 
   setSongPlayingState(false);
   songModal.classList.remove("hidden");
@@ -647,15 +789,42 @@ function openSongModal(song) {
 
 function setSongPlayingState(isPlaying) {
   songArtSpin.classList.toggle("is-spinning", isPlaying);
-  songGlow.classList.toggle("is-playing", isPlaying);
-  songEqualizer.classList.toggle("is-playing", isPlaying);
   songIconPlay.classList.toggle("hidden", isPlaying);
   songIconPause.classList.toggle("hidden", !isPlaying);
+}
+
+function formatSongTime(seconds) {
+  if (!isFinite(seconds) || seconds < 0) seconds = 0;
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60)
+    .toString()
+    .padStart(2, "0");
+  return `${m}:${s}`;
 }
 
 songAudioEl.addEventListener("play", () => setSongPlayingState(true));
 songAudioEl.addEventListener("pause", () => setSongPlayingState(false));
 songAudioEl.addEventListener("ended", () => setSongPlayingState(false));
+
+// Update progress bar & label waktu selagi lagu berjalan.
+songAudioEl.addEventListener("timeupdate", () => {
+  if (!songAudioEl.duration) return;
+  const percent = (songAudioEl.currentTime / songAudioEl.duration) * 100;
+  songProgress.value = percent;
+  songProgress.style.setProperty("--song-progress", `${percent}%`);
+  songTimeCurrent.textContent = formatSongTime(songAudioEl.currentTime);
+  songTimeRemaining.textContent = `-${formatSongTime(
+    songAudioEl.duration - songAudioEl.currentTime,
+  )}`;
+});
+
+// User menggeser progress bar secara manual.
+songProgress.addEventListener("input", () => {
+  if (!songAudioEl.duration) return;
+  const newTime = (Number(songProgress.value) / 100) * songAudioEl.duration;
+  songAudioEl.currentTime = newTime;
+  songProgress.style.setProperty("--song-progress", `${songProgress.value}%`);
+});
 
 songPlayBtn.addEventListener("click", () => {
   if (songAudioEl.paused) {
@@ -663,6 +832,21 @@ songPlayBtn.addEventListener("click", () => {
   } else {
     songAudioEl.pause();
   }
+});
+
+songBackBtn.addEventListener("click", () => {
+  songAudioEl.currentTime = Math.max(0, songAudioEl.currentTime - 10);
+});
+
+songForwardBtn.addEventListener("click", () => {
+  songAudioEl.currentTime = Math.min(
+    songAudioEl.duration || Infinity,
+    songAudioEl.currentTime + 10,
+  );
+});
+
+songVolume.addEventListener("input", () => {
+  songAudioEl.volume = Number(songVolume.value);
 });
 
 function closeSongModal() {
