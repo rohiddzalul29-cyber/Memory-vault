@@ -74,7 +74,7 @@
         </form>
         <p class="login-card__note">
           Website ini bersifat privat.<br />
-          Masukkan password yang telah diberikan untuk melanjutkan.
+          Masukkan password untuk melanjutkan.
         </p>
       </div>
     </div>
@@ -94,6 +94,7 @@
           <button class="nav-link" data-target="quotes">Quotes</button>
           <button class="nav-link" data-target="journal">Journal</button>
           <button class="nav-link" data-target="confessions">Curhat</button>
+          <button class="nav-link" data-target="pesan">Pesan</button>
           <button class="nav-link" data-target="songs">Lagu</button>
           <button class="nav-link" data-target="books">Book Shelf</button>
           <button class="nav-link" data-target="movies">Movie Log</button>
@@ -115,8 +116,8 @@
               </h1>
               <p class="hero__subtitle">
                 Memory Vault adalah ruang pribadi untuk menyimpan foto, video,
-                kutipan, dan catatan harian saya, jauh dari keramaian, hanya
-                untuk orang yang ku percaya.
+                kutipan, dan catatan harian — jauh dari keramaian, hanya
+                untukmu.
               </p>
               <div class="hero__actions">
                 <button class="btn btn-primary" data-goto="memories">
@@ -236,6 +237,54 @@
           <div id="confessions-list" class="journal-list"></div>
         </section>
 
+        <!-- ---------------- PESAN ---------------- -->
+        <section id="pesan" class="page-section">
+          <div class="section-head">
+            <span class="section-head__tab">Pesan</span>
+            <h2>Pesan untuk Rohid</h2>
+            <p>
+              Punya sesuatu yang ingin disampaikan? Tulis pesan singkat di sini.
+            </p>
+          </div>
+
+          <div class="pesan-card">
+            <form id="general-message-form" class="msg-form">
+              <div class="msg-form__row">
+                <label for="general-message-name">Nama kamu</label>
+                <input
+                  type="text"
+                  id="general-message-name"
+                  placeholder="Nama"
+                  required
+                />
+              </div>
+              <div class="msg-form__row">
+                <label for="general-message-text">Pesan</label>
+                <textarea
+                  id="general-message-text"
+                  rows="5"
+                  placeholder="Tulis pesanmu di sini..."
+                  required
+                ></textarea>
+              </div>
+              <div id="general-message-error" class="form-error"></div>
+              <div
+                id="general-message-success"
+                class="msg-form__success hidden"
+              >
+                Pesan terkirim. Terima kasih!
+              </div>
+              <button
+                type="submit"
+                id="general-message-submit"
+                class="btn btn-primary"
+              >
+                Kirim Pesan
+              </button>
+            </form>
+          </div>
+        </section>
+
         <!-- ---------------- LAGU FAVORIT ---------------- -->
         <section id="songs" class="page-section">
           <div class="section-head">
@@ -331,7 +380,6 @@
         </button>
 
         <div class="song-modal__art-wrap">
-          <div class="song-modal__glow" id="song-glow"></div>
           <div class="song-modal__art" id="song-art-spin">
             <img id="song-cover-img" src="" alt="" />
           </div>
@@ -340,35 +388,93 @@
         <h3 id="song-title-el"></h3>
         <p class="song-modal__artist" id="song-artist-el"></p>
 
-        <div class="song-modal__equalizer" id="song-equalizer">
-          <span></span><span></span><span></span><span></span>
+        <div class="song-modal__progress">
+          <input
+            type="range"
+            id="song-progress"
+            class="song-modal__range"
+            min="0"
+            max="100"
+            value="0"
+            step="0.1"
+          />
+          <div class="song-modal__time-row">
+            <span id="song-time-current">0:00</span>
+            <span id="song-time-remaining">-0:00</span>
+          </div>
         </div>
 
-        <button
-          class="song-modal__play-btn"
-          id="song-play-btn"
-          aria-label="Putar/Jeda"
-        >
-          <svg
-            id="song-icon-play"
-            viewBox="0 0 24 24"
-            width="26"
-            height="26"
-            fill="currentColor"
+        <div class="song-modal__controls">
+          <button
+            class="song-modal__ctrl-btn"
+            id="song-back-btn"
+            aria-label="Mundur 10 detik"
           >
-            <path d="M8 5v14l11-7z" />
-          </svg>
-          <svg
-            id="song-icon-pause"
-            viewBox="0 0 24 24"
-            width="26"
-            height="26"
-            fill="currentColor"
-            class="hidden"
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path
+                d="M11 5V1L5.5 6.5 11 12V8c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H3c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"
+              />
+            </svg>
+          </button>
+
+          <button
+            class="song-modal__play-btn"
+            id="song-play-btn"
+            aria-label="Putar/Jeda"
           >
-            <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+            <svg
+              id="song-icon-play"
+              viewBox="0 0 24 24"
+              width="26"
+              height="26"
+              fill="currentColor"
+            >
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            <svg
+              id="song-icon-pause"
+              viewBox="0 0 24 24"
+              width="26"
+              height="26"
+              fill="currentColor"
+              class="hidden"
+            >
+              <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+            </svg>
+          </button>
+
+          <button
+            class="song-modal__ctrl-btn"
+            id="song-forward-btn"
+            aria-label="Maju 10 detik"
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path
+                d="M13 5V1l5.5 5.5L13 12V8c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div class="song-modal__volume">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M3 10v4h4l5 5V5L7 10H3z" />
           </svg>
-        </button>
+          <input
+            type="range"
+            id="song-volume"
+            class="song-modal__range song-modal__range--volume"
+            min="0"
+            max="1"
+            step="0.01"
+            value="1"
+          />
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path
+              d="M3 10v4h4l5 5V5L7 10H3zm13.5 2A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+            />
+          </svg>
+        </div>
 
         <p class="song-modal__note" id="song-note-el"></p>
 
@@ -396,6 +502,46 @@
             class="modal__description modal__description--full"
             id="text-modal-content"
           ></p>
+
+          <!-- Hanya muncul saat popup dibuka dari Curhat, bukan Journal -->
+          <div id="text-modal-message" class="curhat-message hidden">
+            <div class="curhat-message__divider"></div>
+            <h4 class="curhat-message__heading">Kirim pesan untuk Rohid</h4>
+            <p class="curhat-message__hint">
+              Tentang curhatan ini — tulis apa saja yang ingin kamu sampaikan.
+            </p>
+            <form id="curhat-message-form" class="msg-form">
+              <div class="msg-form__row">
+                <label for="curhat-message-name">Nama kamu</label>
+                <input
+                  type="text"
+                  id="curhat-message-name"
+                  placeholder="Nama"
+                  required
+                />
+              </div>
+              <div class="msg-form__row">
+                <label for="curhat-message-text">Pesan</label>
+                <textarea
+                  id="curhat-message-text"
+                  rows="3"
+                  placeholder="Tulis pesanmu di sini..."
+                  required
+                ></textarea>
+              </div>
+              <div id="curhat-message-error" class="form-error"></div>
+              <div id="curhat-message-success" class="msg-form__success hidden">
+                Pesan terkirim. Terima kasih!
+              </div>
+              <button
+                type="submit"
+                id="curhat-message-submit"
+                class="btn btn-primary"
+              >
+                Kirim Pesan
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
