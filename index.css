@@ -1641,6 +1641,60 @@ main {
   margin-bottom: var(--space-3);
 }
 
+/* ---- Lirik sinkron (karaoke) ---- */
+.song-modal__lyrics {
+  position: relative;
+  max-width: 300px;
+  height: 132px;
+  margin: 0 auto var(--space-3);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
+}
+
+.song-modal__lyrics.hidden {
+  display: none;
+}
+
+.song-modal__lyrics-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 60px 4px;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.song-modal__lyrics-line {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-ink-faint);
+  opacity: 0.55;
+  transition:
+    color 0.25s ease,
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.song-modal__lyrics-line.is-active {
+  color: var(--color-sky-deep);
+  font-weight: 700;
+  font-size: 15.5px;
+  opacity: 1;
+  transform: scale(1.03);
+}
+
 /* ---- Progress bar (waktu berjalan) ---- */
 .song-modal__progress {
   margin: 0 auto var(--space-2);
