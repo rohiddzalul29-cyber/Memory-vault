@@ -1266,12 +1266,143 @@ main {
   line-height: 1.7;
 }
 
-.modal__card--text {
-  max-width: 560px;
+/* =========================================================
+   HALAMAN BACA — Journal & Curhat (kertas kuno kecoklatan)
+   Ini section halaman biasa (bukan overlay/popup), mengalir
+   dalam <main> sama seperti tab lain.
+   ========================================================= */
+.read-page {
+  max-width: 720px;
+  margin: 0 auto;
 }
 
-.modal__card--text .modal__body {
-  padding-top: var(--space-4);
+.read-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: var(--space-3);
+  border: none;
+  background: transparent;
+  padding: 6px 4px;
+  color: var(--color-sky-deep);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.read-page__back:hover {
+  text-decoration: underline;
+}
+
+.read-page__paper {
+  position: relative;
+  padding: 40px clamp(22px, 6vw, 56px) 52px;
+  border-radius: 14px;
+
+  /* kertas tua: dasar krem-cokelat dengan noda & serat samar, */
+  /* tanpa garis tepi keras — hanya bayangan lembut di luar     */
+  background-color: #ecdebd;
+  background-image:
+    radial-gradient(
+      circle at 12% 16%,
+      rgba(120, 84, 42, 0.13) 0%,
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(120, 84, 42, 0.11) 0%,
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 80% 94%,
+      rgba(120, 84, 42, 0.14) 0%,
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 6% 88%,
+      rgba(120, 84, 42, 0.1) 0%,
+      transparent 22%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(120, 84, 42, 0.04) 0px,
+      transparent 1px,
+      transparent 3px
+    );
+
+  box-shadow:
+    0 18px 40px rgba(43, 36, 30, 0.18),
+    0 3px 10px rgba(43, 36, 30, 0.1);
+}
+
+.read-page__date {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #8a5a2a;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.read-page__paper h2 {
+  font-family: var(--font-hand);
+  font-size: 32px;
+  font-weight: 600;
+  color: #5c3c18;
+  margin: 0 0 18px;
+  padding-bottom: 16px;
+  border-bottom: 1.5px solid rgba(92, 60, 24, 0.22);
+}
+
+.read-page__content {
+  white-space: pre-wrap;
+  line-height: 1.85;
+  font-size: 15.5px;
+  color: #3f2a10;
+}
+
+/* Blok "Kirim pesan untuk Rohid" saat berada di atas kertas kuno */
+.read-page .curhat-message__divider {
+  background: rgba(92, 60, 24, 0.2);
+}
+
+.read-page .curhat-message__heading {
+  color: #5c3c18;
+}
+
+.read-page .curhat-message__hint {
+  color: #7a5a30;
+}
+
+.read-page .msg-form__row label {
+  color: #7a5a30;
+}
+
+.read-page .msg-form__row input,
+.read-page .msg-form__row textarea {
+  border-color: rgba(92, 60, 24, 0.3);
+  color: #3f2a10;
+}
+
+.read-page .msg-form__row textarea {
+  background: rgba(255, 250, 235, 0.35);
+}
+
+.read-page .msg-form__row input::placeholder,
+.read-page .msg-form__row textarea::placeholder {
+  color: rgba(92, 60, 24, 0.45);
+}
+
+.read-page .msg-form__row input:focus,
+.read-page .msg-form__row textarea:focus {
+  border-color: #7c3548;
+}
+
+@media (max-width: 520px) {
+  .read-page__paper {
+    padding: 30px 20px 40px;
+    border-radius: 10px;
+  }
 }
 
 /* =========================================================
