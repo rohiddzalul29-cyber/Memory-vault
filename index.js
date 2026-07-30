@@ -432,15 +432,13 @@ async function renderQuotes() {
 let journalCache = [];
 let confessionsCache = [];
 
-const textModal = document.getElementById("text-modal");
-const textModalBackdrop = document.getElementById("text-modal-backdrop");
-const textModalClose = document.getElementById("text-modal-close");
-const textModalDate = document.getElementById("text-modal-date");
-const textModalTitle = document.getElementById("text-modal-title");
-const textModalContent = document.getElementById("text-modal-content");
+const textReadBack = document.getElementById("text-read-back");
+const textReadDate = document.getElementById("text-read-date");
+const textReadTitle = document.getElementById("text-read-title");
+const textReadContent = document.getElementById("text-read-content");
 
-// ---- Blok "Kirim pesan untuk Rohid" di dalam popup curhat ----------------
-const textModalMessageBlock = document.getElementById("text-modal-message");
+// ---- Blok "Kirim pesan untuk Rohid" di dalam halaman baca curhat --------
+const textReadMessageBlock = document.getElementById("text-read-message");
 const curhatMessageForm = document.getElementById("curhat-message-form");
 const curhatMessageNameInput = document.getElementById("curhat-message-name");
 const curhatMessageTextInput = document.getElementById("curhat-message-text");
@@ -450,8 +448,12 @@ const curhatMessageSubmitBtn = document.getElementById("curhat-message-submit");
 
 // Menyimpan curhatan mana yang sedang dibuka, supaya saat form pesan
 // dikirim kita tahu harus melampirkan judul curhatan yang mana.
-// Bernilai null saat popup dibuka dari Journal (bukan Curhat).
+// Bernilai null saat halaman dibuka dari Journal (bukan Curhat).
 let currentCurhatContext = null;
+
+// Menyimpan tab asal (journal / confessions) supaya tombol "Kembali"
+// tahu harus membawa pengguna balik ke mana.
+let textReadOrigin = "journal";
 
 function resetCurhatMessageForm() {
   curhatMessageForm.reset();
@@ -462,27 +464,33 @@ function resetCurhatMessageForm() {
 }
 
 function openTextModal(entry, type) {
-  textModalDate.textContent = formatDate(entry.entry_date);
-  textModalTitle.textContent = entry.title || "";
-  textModalContent.textContent = entry.content || "";
+  textReadDate.textContent = formatDate(entry.entry_date);
+  textReadTitle.textContent = entry.title || "";
+  textReadContent.textContent = entry.content || "";
 
-  // Form pesan hanya ditampilkan kalau popup ini dibuka dari Curhat.
+  // Form pesan hanya ditampilkan kalau halaman ini dibuka dari Curhat.
   if (type === "confession") {
     currentCurhatContext = { id: entry.id, title: entry.title || "" };
-    textModalMessageBlock.classList.remove("hidden");
+    textReadMessageBlock.classList.remove("hidden");
+    textReadOrigin = "confessions";
   } else {
     currentCurhatContext = null;
-    textModalMessageBlock.classList.add("hidden");
+    textReadMessageBlock.classList.add("hidden");
+    textReadOrigin = "journal";
   }
   resetCurhatMessageForm();
 
-  textModal.classList.remove("hidden");
-  document.body.style.overflow = "hidden";
+  // Pindah halaman sungguhan lewat mekanisme navigasi section yang
+  // sama seperti tab lain — nav tab asal (Journal/Curhat) dibiarkan
+  // tetap aktif karena secara konsep ini masih bagian dari tab itu.
+  sections.forEach((s) =>
+    s.classList.toggle("is-active", s.id === "text-read"),
+  );
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function closeTextModal() {
-  textModal.classList.add("hidden");
-  document.body.style.overflow = "";
+  goToSection(textReadOrigin);
 }
 
 curhatMessageForm.addEventListener("submit", async (e) => {
@@ -525,12 +533,7 @@ curhatMessageForm.addEventListener("submit", async (e) => {
   curhatMessageSuccess.classList.remove("hidden");
 });
 
-textModalClose.addEventListener("click", closeTextModal);
-textModalBackdrop.addEventListener("click", closeTextModal);
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !textModal.classList.contains("hidden"))
-    closeTextModal();
-});
+textReadBack.addEventListener("click", closeTextModal);
 
 // Ambil potongan singkat dari isi tulisan, untuk ditampilkan di card.
 function makeExcerpt(text, maxLength = 110) {
