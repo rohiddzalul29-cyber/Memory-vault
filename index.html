@@ -248,6 +248,77 @@
           <div id="confessions-list" class="journal-list"></div>
         </section>
 
+        <!-- ---------------- HALAMAN BACA: Journal & Curhat ---------------- -->
+        <!-- Ini bukan popup — halaman sungguhan yang menggantikan tab       -->
+        <!-- saat sebuah entri Journal/Curhat dibuka, bergaya kertas kuno.   -->
+        <section id="text-read" class="page-section read-page">
+          <button type="button" id="text-read-back" class="read-page__back">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Kembali
+          </button>
+
+          <div class="read-page__paper">
+            <span class="read-page__date" id="text-read-date"></span>
+            <h2 id="text-read-title"></h2>
+            <p class="read-page__content" id="text-read-content"></p>
+
+            <!-- Hanya muncul saat halaman dibuka dari Curhat, bukan Journal -->
+            <div id="text-read-message" class="curhat-message hidden">
+              <div class="curhat-message__divider"></div>
+              <h4 class="curhat-message__heading">Kirim pesan untuk Rohid</h4>
+              <p class="curhat-message__hint">
+                Tentang curhatan ini — tulis apa saja yang ingin kamu sampaikan.
+              </p>
+              <form id="curhat-message-form" class="msg-form">
+                <div class="msg-form__row">
+                  <label for="curhat-message-name">Nama kamu</label>
+                  <input
+                    type="text"
+                    id="curhat-message-name"
+                    placeholder="Nama"
+                    required
+                  />
+                </div>
+                <div class="msg-form__row">
+                  <label for="curhat-message-text">Pesan</label>
+                  <textarea
+                    id="curhat-message-text"
+                    rows="3"
+                    placeholder="Tulis pesanmu di sini..."
+                    required
+                  ></textarea>
+                </div>
+                <div id="curhat-message-error" class="form-error"></div>
+                <div
+                  id="curhat-message-success"
+                  class="msg-form__success hidden"
+                >
+                  Pesan terkirim. Terima kasih!
+                </div>
+                <button
+                  type="submit"
+                  id="curhat-message-submit"
+                  class="btn btn-primary"
+                >
+                  Kirim Pesan
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+
         <!-- ---------------- PESAN ---------------- -->
         <section id="pesan" class="page-section">
           <div class="section-head">
@@ -490,70 +561,6 @@
         <p class="song-modal__note" id="song-note-el"></p>
 
         <audio id="song-audio-el"></audio>
-      </div>
-    </div>
-
-    <!-- ============================================================ -->
-    <!-- POPUP ISI LENGKAP — Journal & Curhat                          -->
-    <!-- ============================================================ -->
-    <div id="text-modal" class="modal hidden">
-      <div class="modal__backdrop" id="text-modal-backdrop"></div>
-      <div
-        class="modal__card modal__card--text"
-        role="dialog"
-        aria-modal="true"
-      >
-        <button class="modal__close" id="text-modal-close" aria-label="Tutup">
-          &times;
-        </button>
-        <div class="modal__body">
-          <span class="modal__date" id="text-modal-date"></span>
-          <h3 id="text-modal-title"></h3>
-          <p
-            class="modal__description modal__description--full"
-            id="text-modal-content"
-          ></p>
-
-          <!-- Hanya muncul saat popup dibuka dari Curhat, bukan Journal -->
-          <div id="text-modal-message" class="curhat-message hidden">
-            <div class="curhat-message__divider"></div>
-            <h4 class="curhat-message__heading">Kirim pesan untuk Rohid</h4>
-            <p class="curhat-message__hint">
-              Tentang curhatan ini — tulis apa saja yang ingin kamu sampaikan.
-            </p>
-            <form id="curhat-message-form" class="msg-form">
-              <div class="msg-form__row">
-                <label for="curhat-message-name">Nama kamu</label>
-                <input
-                  type="text"
-                  id="curhat-message-name"
-                  placeholder="Nama"
-                  required
-                />
-              </div>
-              <div class="msg-form__row">
-                <label for="curhat-message-text">Pesan</label>
-                <textarea
-                  id="curhat-message-text"
-                  rows="3"
-                  placeholder="Tulis pesanmu di sini..."
-                  required
-                ></textarea>
-              </div>
-              <div id="curhat-message-error" class="form-error"></div>
-              <div id="curhat-message-success" class="msg-form__success hidden">
-                Pesan terkirim. Terima kasih!
-              </div>
-              <button
-                type="submit"
-                id="curhat-message-submit"
-                class="btn btn-primary"
-              >
-                Kirim Pesan
-              </button>
-            </form>
-          </div>
-        </div>
       </div>
     </div>
 
