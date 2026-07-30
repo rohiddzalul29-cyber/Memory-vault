@@ -767,6 +767,71 @@ const songTimeRemaining = document.getElementById("song-time-remaining");
 const songBackBtn = document.getElementById("song-back-btn");
 const songForwardBtn = document.getElementById("song-forward-btn");
 const songVolume = document.getElementById("song-volume");
+const songLyricsWrap = document.getElementById("song-lyrics-wrap");
+const songLyricsInner = document.getElementById("song-lyrics-inner");
+
+let currentLyricsLines = [];
+let currentLyricsIndex = -1;
+
+// Parse teks format LRC ("[mm:ss.xx]teks baris") jadi array {time, text}
+// terurut berdasarkan waktu.
+function parseLrc(lrcText) {
+  if (!lrcText) return [];
+  const timeTag = /\[(\d{1,2}):(\d{1,2}(?:\.\d{1,3})?)\]/g;
+  const lines = [];
+  lrcText.split(/\r?\n/).forEach((rawLine) => {
+    const matches = [...rawLine.matchAll(timeTag)];
+    if (matches.length === 0) return;
+    const text = rawLine.replace(timeTag, "").trim();
+    matches.forEach((m) => {
+      const minutes = parseInt(m[1], 10);
+      const seconds = parseFloat(m[2]);
+      lines.push({ time: minutes * 60 + seconds, text });
+    });
+  });
+  return lines.sort((a, b) => a.time - b.time);
+}
+
+function renderLyrics(lines) {
+  songLyricsInner.innerHTML = lines
+    .map(
+      (line, index) =>
+        `<div class="song-modal__lyrics-line" data-index="${index}">${
+          escapeHtml(line.text) || "&nbsp;"
+        }</div>`,
+    )
+    .join("");
+  songLyricsInner.style.transform = "translateY(0px)";
+}
+
+// Cari baris lirik yang sedang berjalan sesuai waktu audio, lalu highlight
+// dan geser panel supaya baris aktif selalu ada di tengah.
+function syncLyrics(currentTime) {
+  if (currentLyricsLines.length === 0) return;
+  let activeIndex = -1;
+  for (let i = 0; i < currentLyricsLines.length; i++) {
+    if (currentLyricsLines[i].time <= currentTime) activeIndex = i;
+    else break;
+  }
+  if (activeIndex === currentLyricsIndex) return;
+  currentLyricsIndex = activeIndex;
+
+  const lineEls = songLyricsInner.querySelectorAll(
+    ".song-modal__lyrics-line",
+  );
+  lineEls.forEach((el, i) =>
+    el.classList.toggle("is-active", i === activeIndex),
+  );
+
+  if (activeIndex >= 0 && lineEls[activeIndex]) {
+    const activeEl = lineEls[activeIndex];
+    const offset =
+      activeEl.offsetTop +
+      activeEl.offsetHeight / 2 -
+      songLyricsWrap.clientHeight / 2;
+    songLyricsInner.style.transform = `translateY(${-offset}px)`;
+  }
+}
 
 function openSongModal(song) {
   songCoverImg.src = song.cover_url || "";
@@ -774,6 +839,16 @@ function openSongModal(song) {
   songArtistEl.textContent = song.artist || "";
   songNoteEl.textContent = song.memory_note || "";
   songAudioEl.src = song.audio_url;
+
+  currentLyricsLines = parseLrc(song.lyrics_lrc);
+  currentLyricsIndex = -1;
+  if (currentLyricsLines.length > 0) {
+    renderLyrics(currentLyricsLines);
+    songLyricsWrap.classList.remove("hidden");
+  } else {
+    songLyricsInner.innerHTML = "";
+    songLyricsWrap.classList.add("hidden");
+  }
 
   songProgress.value = 0;
   songProgress.style.setProperty("--song-progress", "0%");
@@ -819,6 +894,7 @@ songAudioEl.addEventListener("timeupdate", () => {
   songTimeRemaining.textContent = `-${formatSongTime(
     songAudioEl.duration - songAudioEl.currentTime,
   )}`;
+  syncLyrics(songAudioEl.currentTime);
 });
 
 // User menggeser progress bar secara manual.
@@ -827,6 +903,7 @@ songProgress.addEventListener("input", () => {
   const newTime = (Number(songProgress.value) / 100) * songAudioEl.duration;
   songAudioEl.currentTime = newTime;
   songProgress.style.setProperty("--song-progress", `${songProgress.value}%`);
+  syncLyrics(newTime);
 });
 
 songPlayBtn.addEventListener("click", () => {
